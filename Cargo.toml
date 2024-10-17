@@ -1,3 +1,4 @@
+# publish: cargo release --execute
 [package]
 authors = ["monax-owo"]
 description = "Crate to manage settings by monax-owo"
