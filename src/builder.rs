@@ -7,9 +7,7 @@ use std::{
 use anyhow::{bail, Context};
 use serde::{Deserialize, Serialize};
 
-use crate::Configurable;
-
-use super::Config;
+use crate::{Config, Configurable};
 
 #[derive(Debug)]
 pub struct ConfigBuilder<T = ()> {
