@@ -1,8 +1,8 @@
-pub(crate) mod app_config;
 pub(crate) mod builder;
+pub(crate) mod config;
 
-pub use self::app_config::*;
 pub use self::builder::*;
+pub use self::config::*;
 
 pub trait Configurable {
   /// selfの内容をファイルに書き込むメソッド
