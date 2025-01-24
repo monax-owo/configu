@@ -1,7 +1,7 @@
 # publish: cargo release --execute
 [package]
 authors = ["monax-owo"]
-description = "Crate to manage settings by monax-owo"
+description = "Crate to manage settings"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 name = "configu"
