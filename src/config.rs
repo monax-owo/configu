@@ -2,19 +2,13 @@ use std::{
   fs::{read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
   ops::{Deref, DerefMut},
-  path::{Path, PathBuf},
+  path::Path,
   sync::RwLock,
 };
 
 use serde::{Deserialize, Serialize};
 
-use crate::{ConfigBuilder, Configurable};
-
-#[derive(Debug)]
-pub struct Config<T = ()> {
-  pub file_path: PathBuf,
-  pub(crate) config: RwLock<T>,
-}
+use crate::{Config, ConfigBuilder, Configurable};
 
 impl<T> Config<T>
 where
