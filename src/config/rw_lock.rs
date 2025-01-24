@@ -1,32 +1,16 @@
-mod rw_lock;
-
 use std::{
-  fmt::Debug,
   fs::{read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
-  ops::{Deref, DerefMut},
-  path::Path,
+  sync::RwLock,
 };
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Config, ConfigBuilder, Configurable};
+use crate::{Config, Configurable};
 
-impl<T> Config<T>
+impl<T> Configurable<RwLock<()>> for Config<std::sync::RwLock<T>>
 where
-  T: for<'de> Deserialize<'de> + Serialize,
-{
-  pub fn open<P>(path: P) -> ConfigBuilder<()>
-  where
-    P: AsRef<Path>,
-  {
-    ConfigBuilder::new(path)
-  }
-}
-
-impl<T> Configurable<()> for Config<T>
-where
-  T: Serialize + for<'de> Deserialize<'de> + Sized + Debug,
+  T: Serialize + for<'de> Deserialize<'de>,
 {
   fn save(&self) -> anyhow::Result<()> {
     let mut writer = BufWriter::new(File::create(&self.file_path)?);
@@ -53,28 +37,8 @@ where
     };
 
     let deserialized = toml::from_str::<T>(&content)?;
-    self.config = deserialized;
+    *self.config.write().unwrap() = deserialized;
 
     Ok(())
-  }
-}
-
-impl<T> Deref for Config<T>
-where
-  T: for<'de> Deserialize<'de> + Serialize,
-{
-  type Target = T;
-
-  fn deref(&self) -> &Self::Target {
-    &self.config
-  }
-}
-
-impl<T> DerefMut for Config<T>
-where
-  T: for<'de> Deserialize<'de> + Serialize,
-{
-  fn deref_mut(&mut self) -> &mut Self::Target {
-    &mut self.config
   }
 }
