@@ -9,15 +9,15 @@ use serde::{Deserialize, Serialize};
 
 use crate::Configurable;
 
-use super::{AppConfig, EmptyConfig};
+use super::{Config, EmptyConfig};
 
 #[derive(Debug)]
-pub struct AppConfigBuilder<T = EmptyConfig> {
+pub struct ConfigBuilder<T = EmptyConfig> {
   file_path: PathBuf,
   data: T,
 }
 
-impl AppConfigBuilder<EmptyConfig> {
+impl ConfigBuilder<EmptyConfig> {
   pub(crate) fn new<P>(path: P) -> Self
   where
     P: AsRef<Path>,
@@ -29,16 +29,16 @@ impl AppConfigBuilder<EmptyConfig> {
   }
 }
 
-impl<T> AppConfigBuilder<T>
+impl<T> ConfigBuilder<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
   /// set data to builder and return builder.
-  pub fn data<U>(self, data: U) -> AppConfigBuilder<U>
+  pub fn data<U>(self, data: U) -> ConfigBuilder<U>
   where
     U: for<'de> Deserialize<'de> + Serialize,
   {
-    AppConfigBuilder {
+    ConfigBuilder {
       file_path: self.file_path,
       data,
     }
@@ -47,7 +47,7 @@ where
   /// Building Self.
   /// # Errors
   /// This function will return an error if build failed.
-  pub fn build(self) -> anyhow::Result<AppConfig<T>> {
+  pub fn build(self) -> anyhow::Result<Config<T>> {
     let file_path = self.file_path;
     {
       let parent = file_path.parent().context("no parent")?;
@@ -62,11 +62,11 @@ where
       bail!("path is not file")
     }
 
-    let mut conf = AppConfig {
+    let mut conf = Config {
       file_path,
       config: RwLock::new(self.data),
     };
-    AppConfig::load(&mut conf)?;
+    Config::load(&mut conf)?;
 
     Ok(conf)
   }

@@ -8,30 +8,30 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::{AppConfigBuilder, Configurable};
+use crate::{ConfigBuilder, Configurable};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct EmptyConfig {}
 
 #[derive(Debug)]
-pub struct AppConfig<T = EmptyConfig> {
+pub struct Config<T = EmptyConfig> {
   pub file_path: PathBuf,
   pub(crate) config: RwLock<T>,
 }
 
-impl<T> AppConfig<T>
+impl<T> Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  pub fn open<P>(path: P) -> AppConfigBuilder<EmptyConfig>
+  pub fn open<P>(path: P) -> ConfigBuilder<EmptyConfig>
   where
     P: AsRef<Path>,
   {
-    AppConfigBuilder::new(path)
+    ConfigBuilder::new(path)
   }
 }
 
-impl<T> Configurable for AppConfig<T>
+impl<T> Configurable for Config<T>
 where
   T: Serialize + for<'de> Deserialize<'de>,
 {
@@ -66,7 +66,7 @@ where
   }
 }
 
-impl<T> Deref for AppConfig<T>
+impl<T> Deref for Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
@@ -77,7 +77,7 @@ where
   }
 }
 
-impl<T> DerefMut for AppConfig<T>
+impl<T> DerefMut for Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
