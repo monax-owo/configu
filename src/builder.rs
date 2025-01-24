@@ -9,22 +9,22 @@ use serde::{Deserialize, Serialize};
 
 use crate::Configurable;
 
-use super::{Config, EmptyConfig};
+use super::Config;
 
 #[derive(Debug)]
-pub struct ConfigBuilder<T = EmptyConfig> {
+pub struct ConfigBuilder<T = ()> {
   file_path: PathBuf,
   data: T,
 }
 
-impl ConfigBuilder<EmptyConfig> {
+impl ConfigBuilder<()> {
   pub(crate) fn new<P>(path: P) -> Self
   where
     P: AsRef<Path>,
   {
     Self {
       file_path: path.as_ref().to_path_buf(),
-      data: EmptyConfig {},
+      data: (),
     }
   }
 }

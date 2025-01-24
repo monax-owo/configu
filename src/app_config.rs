@@ -10,11 +10,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{ConfigBuilder, Configurable};
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct EmptyConfig {}
-
 #[derive(Debug)]
-pub struct Config<T = EmptyConfig> {
+pub struct Config<T = ()> {
   pub file_path: PathBuf,
   pub(crate) config: RwLock<T>,
 }
@@ -23,7 +20,7 @@ impl<T> Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  pub fn open<P>(path: P) -> ConfigBuilder<EmptyConfig>
+  pub fn open<P>(path: P) -> ConfigBuilder<()>
   where
     P: AsRef<Path>,
   {
