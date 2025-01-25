@@ -62,7 +62,7 @@ where
 
     let mut conf = Config {
       file_path,
-      config: RwLock::new(self.data),
+      config: self.data,
     };
     Config::load(&mut conf)?;
 

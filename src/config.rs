@@ -1,7 +1,6 @@
 mod rw_lock;
 
 use std::{
-  fmt::Debug,
   fs::{read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
   ops::{Deref, DerefMut},
@@ -26,7 +25,7 @@ where
 
 impl<T> Configurable<()> for Config<T>
 where
-  T: Serialize + for<'de> Deserialize<'de> + Sized + Debug,
+  T: Serialize + for<'de> Deserialize<'de>,
 {
   fn save(&self) -> anyhow::Result<()> {
     let mut writer = BufWriter::new(File::create(&self.file_path)?);

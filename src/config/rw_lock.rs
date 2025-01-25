@@ -15,7 +15,7 @@ where
   fn save(&self) -> anyhow::Result<()> {
     let mut writer = BufWriter::new(File::create(&self.file_path)?);
 
-    let serialized = toml::to_string(&self.config)?;
+    let serialized = toml::to_string::<RwLock<T>>(&self.config)?;
     writer.write_all(serialized.as_bytes())?;
 
     Ok(())
