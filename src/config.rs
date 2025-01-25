@@ -49,7 +49,7 @@ where
       let file = File::open(file_path)?;
       let mut reader = BufReader::new(file);
 
-      if read_to_string(file_path)?.is_empty() {
+      if read_to_string(file_path)?.trim().is_empty() {
         self.save()?;
       }
 
