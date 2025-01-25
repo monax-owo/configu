@@ -1,4 +1,3 @@
-# publish: cargo release --execute
 [package]
 authors = ["monax-owo"]
 description = "Simple config"
