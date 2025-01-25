@@ -18,8 +18,8 @@ where
     P: AsRef<Path>,
   {
     Self {
-      file_path: path.as_ref().to_path_buf(),
-      config: data,
+      file: path.as_ref().to_path_buf(),
+      data,
     }
   }
 }
@@ -29,9 +29,9 @@ where
   T: Serialize + for<'de> Deserialize<'de>,
 {
   fn save(&self) -> anyhow::Result<()> {
-    let mut writer = BufWriter::new(File::create(&self.file_path)?);
+    let mut writer = BufWriter::new(File::create(&self.file)?);
 
-    let serialized = toml::to_string::<RwLock<T>>(&self.config)?;
+    let serialized = toml::to_string::<RwLock<T>>(&self.data)?;
     writer.write_all(serialized.as_bytes())?;
 
     Ok(())
@@ -39,10 +39,10 @@ where
 
   // TODO:パースに失敗したらファイル名をoldにして新しいconfig fileを作る
   fn load(&mut self) -> anyhow::Result<()> {
-    let file = File::open(&self.file_path)?;
+    let file = File::open(&self.file)?;
     let mut reader = BufReader::new(file);
 
-    if read_to_string(&self.file_path)?.is_empty() {
+    if read_to_string(&self.file)?.is_empty() {
       self.save()?;
     }
 
@@ -53,7 +53,7 @@ where
     };
 
     let deserialized = toml::from_str::<T>(&content)?;
-    *self.config.write().unwrap() = deserialized;
+    *self.data.write().unwrap() = deserialized;
 
     Ok(())
   }

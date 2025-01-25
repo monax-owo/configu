@@ -11,12 +11,12 @@ pub trait Configurable {
 
 #[derive(Debug)]
 pub struct Config<T = ()> {
-  pub file_path: PathBuf,
-  pub(crate) config: T,
+  pub file: PathBuf,
+  pub(crate) data: T,
 }
 
 #[derive(Debug)]
 pub struct RwLockConfig<T = ()> {
-  pub file_path: PathBuf,
-  pub(crate) config: T,
+  pub file: PathBuf,
+  pub(crate) data: T,
 }
