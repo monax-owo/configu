@@ -1,11 +1,8 @@
-pub(crate) mod builder;
 pub(crate) mod config;
 
 use std::path::PathBuf;
 
-pub use self::builder::*;
-
-pub trait Configurable<T> {
+pub trait Configurable {
   /// selfの内容をファイルに書き込むメソッド
   fn save(&self) -> anyhow::Result<()>;
   /// ファイルの内容をselfに書き込むメソッド
@@ -14,6 +11,12 @@ pub trait Configurable<T> {
 
 #[derive(Debug)]
 pub struct Config<T = ()> {
+  pub file_path: PathBuf,
+  pub(crate) config: T,
+}
+
+#[derive(Debug)]
+pub struct RwLockConfig<T = ()> {
   pub file_path: PathBuf,
   pub(crate) config: T,
 }

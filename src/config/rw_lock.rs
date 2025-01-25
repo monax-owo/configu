@@ -1,14 +1,30 @@
 use std::{
   fs::{read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
+  path::Path,
   sync::RwLock,
 };
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Config, Configurable};
+use crate::{Configurable, RwLockConfig};
 
-impl<T> Configurable<RwLock<()>> for Config<std::sync::RwLock<T>>
+impl<T> RwLockConfig<T>
+where
+  T: for<'de> Deserialize<'de> + Serialize,
+{
+  pub fn open<P>(path: P, data: T) -> Self
+  where
+    P: AsRef<Path>,
+  {
+    Self {
+      file_path: path.as_ref().to_path_buf(),
+      config: data,
+    }
+  }
+}
+
+impl<T> Configurable for RwLockConfig<std::sync::RwLock<T>>
 where
   T: Serialize + for<'de> Deserialize<'de>,
 {

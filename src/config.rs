@@ -9,21 +9,24 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Config, ConfigBuilder, Configurable};
+use crate::{Config, Configurable};
 
 impl<T> Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  pub fn open<P>(path: P) -> ConfigBuilder<()>
+  pub fn open<P>(path: P, data: T) -> Self
   where
     P: AsRef<Path>,
   {
-    ConfigBuilder::new(path)
+    Self {
+      file_path: path.as_ref().to_path_buf(),
+      config: data,
+    }
   }
 }
 
-impl<T> Configurable<()> for Config<T>
+impl<T> Configurable for Config<T>
 where
   T: Serialize + for<'de> Deserialize<'de>,
 {
