@@ -26,9 +26,3 @@ pub struct Config<T = ()> {
   pub file_path: Option<PathBuf>,
   pub(crate) data: T,
 }
-
-#[derive(Debug)]
-pub struct RwLockConfig<T = ()> {
-  pub file_path: Option<PathBuf>,
-  pub(crate) data: T,
-}
