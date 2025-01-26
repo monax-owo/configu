@@ -30,10 +30,12 @@ where
 {
   fn save(&self) -> Result<()> {
     if let Some(file_path) = &self.file_path {
-      let mut writer = BufWriter::new(File::create(file_path)?);
+      let mut writer = BufWriter::new(File::create(file_path).map_err(Error::Create)?);
 
       let serialized = toml::to_string(&self.data).map_err(|e| Error::Serialize(e.to_string()))?;
-      writer.write_all(serialized.as_bytes())?;
+      writer
+        .write_all(serialized.as_bytes())
+        .map_err(Error::Write)?;
       Ok(())
     } else {
       Err(Error::PathNotSpecified)
@@ -43,16 +45,20 @@ where
   // TODO:パースに失敗したらファイル名をoldにして新しいconfig fileを作る
   fn load(&mut self) -> Result<()> {
     if let Some(file_path) = &self.file_path {
-      let file = File::open(file_path)?;
+      let file = File::open(file_path).map_err(Error::Open)?;
       let mut reader = BufReader::new(file);
 
-      if read_to_string(file_path)?.trim().is_empty() {
+      if read_to_string(file_path)
+        .map_err(Error::Read)?
+        .trim()
+        .is_empty()
+      {
         self.save()?;
       }
 
       let content = {
         let mut buf = String::new();
-        reader.read_to_string(&mut buf)?;
+        reader.read_to_string(&mut buf).map_err(Error::Read)?;
         buf
       };
 

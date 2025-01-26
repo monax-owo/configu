@@ -10,8 +10,14 @@ pub enum Error {
   PathNotSpecified,
   #[error("configuration file was not found: {0}")]
   NotFound(PathBuf),
+  #[error("failed to create configuration file: {0}")]
+  Create(#[source] std::io::Error),
+  #[error("failed to open configuration file: {0}")]
+  Open(#[source] std::io::Error),
   #[error("failed to read configuration file: {0}")]
-  Read(#[from] std::io::Error),
+  Read(#[source] std::io::Error),
+  #[error("failed to write configuration file: {0}")]
+  Write(#[source] std::io::Error),
   #[error("failed to serialize: {0}")]
   Serialize(String),
   #[error("failed to deserialize: {0}")]
