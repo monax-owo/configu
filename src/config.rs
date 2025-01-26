@@ -1,5 +1,3 @@
-mod rw_lock;
-
 use std::{
   fs::{read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
@@ -7,10 +5,9 @@ use std::{
   path::Path,
 };
 
-use anyhow::bail;
 use serde::{Deserialize, Serialize};
 
-use crate::{Config, Configurable};
+use crate::{Config, Configurable, Error, Result};
 
 impl<T> Config<T>
 where
@@ -31,20 +28,20 @@ impl<T> Configurable for Config<T>
 where
   T: for<'de> Deserialize<'de> + Serialize + Default,
 {
-  fn save(&self) -> anyhow::Result<()> {
+  fn save(&self) -> Result<()> {
     if let Some(file_path) = &self.file_path {
       let mut writer = BufWriter::new(File::create(file_path)?);
 
-      let serialized = toml::to_string(&self.data)?;
+      let serialized = toml::to_string(&self.data).map_err(|e| Error::Serialize(e.to_string()))?;
       writer.write_all(serialized.as_bytes())?;
       Ok(())
     } else {
-      bail!("Path is not specified");
+      Err(Error::PathNotSpecified)
     }
   }
 
   // TODO:パースに失敗したらファイル名をoldにして新しいconfig fileを作る
-  fn load(&mut self) -> anyhow::Result<()> {
+  fn load(&mut self) -> Result<()> {
     if let Some(file_path) = &self.file_path {
       let file = File::open(file_path)?;
       let mut reader = BufReader::new(file);
@@ -59,12 +56,12 @@ where
         buf
       };
 
-      let deserialized = toml::from_str::<T>(&content)?;
+      let deserialized = toml::from_str(&content).map_err(|e| Error::Deserialize(e.to_string()))?;
       self.data = deserialized;
 
       Ok(())
     } else {
-      bail!("Path is not specified");
+      Err(Error::PathNotSpecified)
     }
   }
 }
