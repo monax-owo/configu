@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 name = "configu"
 repository = "https://github.com/monax-owo/configu"
 rust-version = "1.56"
-version = "0.2.1"
+version = "0.3.0"
 documentation = "https://docs.rs/configu"
 
 [dependencies]
