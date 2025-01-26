@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "configu",
-    "serde"
+    "serde",
+    "thiserror"
   ]
 }
